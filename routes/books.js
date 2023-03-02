@@ -26,6 +26,14 @@ router.get("/", function (req, res, next) {
   res.send(books);
 });
 
+router.get("/:id", function (req, res, next) {
+  const book = books.find((book) => book.id === parseInt(req.params.id));
+  if (!book) {
+    res.status(404).send("The book with the given ID was not found.");
+  }
+  res.send(book);
+});
+
 router.post("/addbook", function (req, res, next) {
   const newBook = {
     id: books.length + 1,
@@ -35,6 +43,15 @@ router.post("/addbook", function (req, res, next) {
   };
   books.push(newBook);
   res.send(books);
+});
+
+router.post("/borrowbook/:id", function (req, res, next) {
+  const book = books.find((book) => book.id === parseInt(req.params.id));
+  if (!book) {
+    res.status(404).send("The book with the given ID was not found.");
+  }
+  book.isAvailable = false;
+  res.send(book);
 });
 
 module.exports = router;
