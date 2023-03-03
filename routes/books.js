@@ -22,11 +22,11 @@ const books = [
   },
 ];
 
-router.get("/", function (req, res, next) {
+router.get("/", function (req, res) {
   res.send(books);
 });
 
-router.get("/:id", function (req, res, next) {
+router.get("/bookid/:id", function (req, res) {
   const book = books.find((book) => book.id === parseInt(req.params.id));
   if (!book) {
     res.status(404).send("The book with the given ID was not found.");
@@ -34,7 +34,7 @@ router.get("/:id", function (req, res, next) {
   res.send(book);
 });
 
-router.post("/addbook", function (req, res, next) {
+router.post("/addbook", function (req, res) {
   const newBook = {
     id: books.length + 1,
     title: req.body.title,
@@ -45,12 +45,30 @@ router.post("/addbook", function (req, res, next) {
   res.send(books);
 });
 
-router.post("/borrowbook/:id", function (req, res, next) {
+router.post("/borrowbook/:id", function (req, res) {
   const book = books.find((book) => book.id === parseInt(req.params.id));
   if (!book) {
     res.status(404).send("The book with the given ID was not found.");
   }
   book.isAvailable = false;
+  res.send(book);
+});
+
+router.get("/borrowedbooks", function (req, res) {
+  const borrowedBooks = books.filter((book) => book.isAvailable === false);
+  if (!borrowedBooks) {
+    res.status(404).send("No borrowed books found.");
+  }
+
+  res.send(borrowedBooks);
+});
+
+router.post("/returnbook/:id", function (req, res) {
+  const book = books.find((book) => book.id === parseInt(req.params.id));
+  if (!book) {
+    res.status(404).send("The book with the given ID was not found.");
+  }
+  book.isAvailable = true;
   res.send(book);
 });
 
